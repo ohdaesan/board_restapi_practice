@@ -48,9 +48,21 @@ public class PostService {
 
     }
 
-    public Post getPostByPostId(long postId) throws PostNotFoundException {
-        return postRepository.findById(postId)
+    public PostDTO getPostByPostId(long postId) throws PostNotFoundException {
+        Post post =  postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("값이 없어요~" + postId));
+
+        return PostDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
+
+
+
+
+
+
     }
 
     // 게시글 수정

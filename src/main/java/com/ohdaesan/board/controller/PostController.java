@@ -16,11 +16,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.nio.charset.Charset;
-
 import java.util.List;
 
 
@@ -30,6 +28,14 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/board")
 public class PostController {
+
+    // 특정 entity 생성
+    // 1. Controller 요청 받기
+    // 2. 요청받을때 dto로 body에 전달된 값 받기
+    // 3. 받은 값을 service로 전달하기
+    // 4. service에서 repository의 메소드를 이용해서 저장하기
+    // 5. 리턴할값이 있나?
+
     private final PostService postService;
 
     // 게시글 작성
@@ -81,25 +87,30 @@ public class PostController {
     @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMsg> findPostByPostId(@PathVariable long postId) throws PostNotFoundException {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(
-                new MediaType(
-                        "application",
-                        "json",
-                        Charset.forName("UTF-8")
-                )
-        );
 
 
-        Post foundPost = postService.getPostByPostId(postId);
+
+        PostDTO foundPost = postService.getPostByPostId(postId);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("post", foundPost);
 
 
         return ResponseEntity.ok()
-                .headers(headers)
                 .body(new ResponseMsg(200, "단일조회성공", responseMap));
+
+
+       // 헤더를 사용할 경우 추가
+        //        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(
+//                new MediaType(
+//                        "application",
+//                        "json",
+//                        Charset.forName("UTF-8")
+//                )
+//        );
+
+        //                .headers(headers)
 
     }
 
