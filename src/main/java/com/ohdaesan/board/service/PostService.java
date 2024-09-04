@@ -31,12 +31,10 @@ public class PostService {
         } catch (Exception e) {
             return false;
         }
-
     }
 
     @Transactional
     public void registPost(PostDTO newPost) {
-
         Post post = Post.builder()
                 .postId(newPost.getPostId())
                 .title(newPost.getTitle())
@@ -44,8 +42,6 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
-
-
     }
 
     public PostDTO getPostByPostId(long postId) throws PostNotFoundException {

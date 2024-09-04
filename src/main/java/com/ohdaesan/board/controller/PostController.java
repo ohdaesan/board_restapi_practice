@@ -16,9 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.nio.charset.Charset;
+
 import java.util.List;
 
 
@@ -28,13 +30,12 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/board")
 public class PostController {
-
     // 특정 entity 생성
     // 1. Controller 요청 받기
-    // 2. 요청받을때 dto로 body에 전달된 값 받기
-    // 3. 받은 값을 service로 전달하기
-    // 4. service에서 repository의 메소드를 이용해서 저장하기
-    // 5. 리턴할값이 있나?
+    // 2. 요청받을때 DTO로 body에 전달된 값 받기
+    // 3. 받은 값을 Service로 전달하기
+    // 4. Service에서 Repository의 메소드를 이용해서 저장하기
+    // 5. 리턴할값이 있는지
 
     private final PostService postService;
 
@@ -87,6 +88,14 @@ public class PostController {
     @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMsg> findPostByPostId(@PathVariable long postId) throws PostNotFoundException {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                new MediaType(
+                        "application",
+                        "json",
+                        Charset.forName("UTF-8")
+                )
+        );
 
 
 
@@ -97,6 +106,7 @@ public class PostController {
 
 
         return ResponseEntity.ok()
+                .headers(headers)
                 .body(new ResponseMsg(200, "단일조회성공", responseMap));
 
 
@@ -128,7 +138,9 @@ public class PostController {
         String msg = "게시글 수정에 성공하였습니다.";
         responseMap.put("result", msg);
 
-        return ResponseEntity.ok().body(new ResponseMsg(203, "게시글 수정 성공", responseMap));
+        return ResponseEntity
+                .ok()
+                .body(new ResponseMsg(203, "게시글 수정 성공", responseMap));
     }
 
     // 게시글 삭제
@@ -149,6 +161,7 @@ public class PostController {
             throw new PostNotFoundException("게시글 삭제에 실패하였습니다.");
         }
 
+//        return ResponseEntity.ok().body(new ResponseMsg(204, "게시글 삭제 성공", msg /* map type이 아니라 Option일 경우 */));
         return ResponseEntity
                 .ok()
                 .body(new ResponseMsg(204, "게시글 삭제 성공", responseMap));
