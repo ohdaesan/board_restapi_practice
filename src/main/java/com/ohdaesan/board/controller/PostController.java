@@ -30,13 +30,19 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/board")
 public class PostController {
+    // 특정 entity 생성
+    // 1. Controller 요청 받기
+    // 2. 요청받을때 DTO로 body에 전달된 값 받기
+    // 3. 받은 값을 Service로 전달하기
+    // 4. Service에서 Repository의 메소드를 이용해서 저장하기
+    // 5. 리턴할값이 있는지
+
     private final PostService postService;
 
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "게시판에 업로드할 새로운 게시글 작성")
     @PostMapping("/posts")
     public ResponseEntity<ResponseMsg> createNewPost(@RequestBody PostDTO newPost) {
-
         postService.registPost(newPost);
 
         String successMsg = "게시글 등록에 성공하였습니다.";
@@ -53,7 +59,6 @@ public class PostController {
     @Operation(summary = "게시글 전체 조회", description = "사이트의 게시글 전체 조회")
     @GetMapping("/posts")
     public ResponseEntity<ResponseMsg> findAllPosts() {
-
         List<Post> posts = postService.findAllPosts();
 
         Map<String, Object> responseMap = new HashMap<>();
@@ -117,7 +122,9 @@ public class PostController {
         String msg = "게시글 수정에 성공하였습니다.";
         responseMap.put("result", msg);
 
-        return ResponseEntity.ok().body(new ResponseMsg(203, "게시글 수정 성공", responseMap));
+        return ResponseEntity
+                .ok()
+                .body(new ResponseMsg(203, "게시글 수정 성공", responseMap));
     }
 
     // 게시글 삭제
@@ -138,6 +145,7 @@ public class PostController {
             throw new PostNotFoundException("게시글 삭제에 실패하였습니다.");
         }
 
+//        return ResponseEntity.ok().body(new ResponseMsg(204, "게시글 삭제 성공", msg /* map type이 아니라 Option일 경우 */));
         return ResponseEntity
                 .ok()
                 .body(new ResponseMsg(204, "게시글 삭제 성공", responseMap));
