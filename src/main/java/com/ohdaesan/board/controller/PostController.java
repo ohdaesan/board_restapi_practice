@@ -2,6 +2,7 @@ package com.ohdaesan.board.controller;
 
 import com.ohdaesan.board.common.ResponseMsg;
 import com.ohdaesan.board.domain.dto.PostDTO;
+import com.ohdaesan.board.domain.entity.Post;
 import com.ohdaesan.board.global.PostNotFoundException;
 import com.ohdaesan.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,11 +54,27 @@ public class PostController {
 
     // 게시글 수정
     @Operation(summary = "게시글 수정", description = "특정 게시글 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "203", description = "게시글 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못 입력된 파라미터")
+    })
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<?> editPost(@PathVariable int postId, @RequestBody PostDTO modifiedPost) {
+    public ResponseEntity<?> editPost(@PathVariable long postId, @RequestBody PostDTO modifiedPost) throws PostNotFoundException {
+        Map<String, Object> response = new HashMap<>();
 
-        return null;
+        Post postEntity = Post.builder().postId(postId).title(modifiedPost.getTitle()).content(modifiedPost.getContent()).build();
+
+        boolean isUpdated = postService.editPost(postId, postEntity);
+        if (isUpdated) {
+            response.put("result", "게시글 수정에 성공하였습니다.");
+            return ResponseEntity
+                    .status(203)
+                    .body(new ResponseMsg(203, "게시글 수정 성공", response));
+        } else {
+            throw new PostNotFoundException("게시글을 찾을 수 없거나 수정에 실패하였습니다.");
+        }
     }
+
 
     // 게시글 삭제
     @Operation(summary = "게시글 삭제", description = "특정 게시글 삭제")
