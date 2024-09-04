@@ -39,9 +39,19 @@ public class PostController {
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "게시판에 업로드할 새로운 게시글 작성")
     @PostMapping("/posts")
-    public ResponseEntity<?> createNewPost (@RequestBody PostDTO newPost) {
+    public ResponseEntity<ResponseMsg> createNewPost (@RequestBody PostDTO newPost) {
 
-        return null;
+//        System.out.println("newPost = " + newPost);
+        postService.registPost(newPost);
+
+        String successMsg = "게시글 등록에 성공하였습니다.";
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("result", successMsg);
+
+        return ResponseEntity
+                .ok()
+                .body(new ResponseMsg(201, "게시글 추가 성공", responseMap));
     }
 
     // 게시글 전체 조회
@@ -49,25 +59,18 @@ public class PostController {
     @GetMapping("/posts")
     public ResponseEntity<ResponseMsg> findAllPosts() {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(
-                new MediaType(
-                        "application",
-                        "json",
-                        Charset.forName("UTF-8")
-                )
-        );
-
         List<Post> posts = postService.findAllPosts();
 
-        Map<String,Object> resqonseMap= new HashMap<>();
-        resqonseMap.put("posts",posts);
+        Map<String,Object> responseMap= new HashMap<>();
+        responseMap.put("posts",posts);
 
-        ResponseMsg responseMsg = new ResponseMsg(
-                200,"조회성공",resqonseMap
-        );
+        // 밑의 방법과 동일함.
+//        ResponseMsg responseMsg = new ResponseMsg(
+//                200,"조회성공",responseMap
+//        );
+//        return new ResponseEntity<>(responseMsg, HttpStatus.OK);
 
-        return new ResponseEntity<>(responseMsg,headers, HttpStatus.OK);
+        return ResponseEntity.ok().body(new ResponseMsg(200,"조회성공",responseMap));
     }
 
     // 게시글 단일 조회
@@ -80,7 +83,7 @@ public class PostController {
                             description = "사용자 화면에서 넘어오는 post의 pk"
                     )
             })
-    @GetMapping("/post/{postId}")
+    @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMsg> findPostByPostId(@PathVariable long postId) throws PostNotFoundException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -94,7 +97,7 @@ public class PostController {
 
 
 
-        PostDTO foundPost = postService.getPostByPostId(postId);
+        Post foundPost = postService.getPostByPostId(postId);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("post", foundPost);
