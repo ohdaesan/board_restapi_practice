@@ -1,5 +1,6 @@
 package com.ohdaesan.board.service;
 
+import com.ohdaesan.board.domain.dto.PostDTO;
 import com.ohdaesan.board.domain.entity.Post;
 import com.ohdaesan.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import com.ohdaesan.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,6 +33,20 @@ public class PostService {
         } catch (Exception e) {
             return false;
         }
+
+    }
+
+    @Transactional
+    public void registPost(PostDTO newPost) {
+
+        Post post = Post.builder()
+                .postId(newPost.getPostId())
+                .title(newPost.getTitle())
+                .content(newPost.getContent())
+                .build();
+
+        postRepository.save(post);
+
 
     }
 }
