@@ -4,6 +4,8 @@ import com.ohdaesan.board.common.ResponseMsg;
 import com.ohdaesan.board.domain.dto.PostDTO;
 import com.ohdaesan.board.global.PostNotFoundException;
 import com.ohdaesan.board.service.PostService;
+import com.ohdaesan.board.domain.entity.Post;
+import com.ohdaesan.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,10 +13,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "Spring Boot Swagger 연동 API (Board)")
@@ -36,9 +47,27 @@ public class PostController {
     // 게시글 전체 조회
     @Operation(summary = "게시글 전체 조회", description = "사이트의 게시글 전체 조회")
     @GetMapping("/posts")
-    public ResponseEntity<?> findAllPosts() {
+    public ResponseEntity<ResponseMsg> findAllPosts() {
 
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                new MediaType(
+                        "application",
+                        "json",
+                        Charset.forName("UTF-8")
+                )
+        );
+
+        List<Post> posts = postService.findAllPosts();
+
+        Map<String,Object> resqonseMap= new HashMap<>();
+        resqonseMap.put("posts",posts);
+
+        ResponseMsg responseMsg = new ResponseMsg(
+                200,"조회성공",resqonseMap
+        );
+
+        return new ResponseEntity<>(responseMsg,headers, HttpStatus.OK);
     }
 
     // 게시글 단일 조회
