@@ -1,30 +1,29 @@
 package com.ohdaesan.board.controller;
 
+import com.ohdaesan.board.common.ResponseMsg;
 import com.ohdaesan.board.domain.dto.PostDTO;
+import com.ohdaesan.board.global.PostNotFoundException;
+import com.ohdaesan.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag(name = "Spring Boot Swagger 연동 API (Board)")
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/board")
 public class PostController {
-    private List<PostDTO> posts;
-
-    public PostController() {
-        posts = new ArrayList<>();
-
-        posts.add(new PostDTO(1, "title01", "content01"));
-        posts.add(new PostDTO(2, "title02", "content02"));
-        posts.add(new PostDTO(3, "title03", "content03"));
-    }
+    private final PostService postService;
 
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "게시판에 업로드할 새로운 게시글 작성")
@@ -67,8 +66,19 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "잘못 입력된 파라미터")
     })
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<?> deletePost (@PathVariable int postId) {
+    public ResponseEntity<?> deletePost (@PathVariable long postId) throws PostNotFoundException{
+        Map<String, Object> responseMap = new HashMap<>();
 
-        return null;
+        boolean isDeleted = postService.deletePost(postId);
+        if(isDeleted) {
+            String msg = "게시글 삭제에 성공하였습니다.";
+            responseMap.put("result", msg);
+        } else {
+            throw new PostNotFoundException("게시글 삭제에 실패하였습니다.");
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(new ResponseMsg(204, "게시글 삭제 성공", responseMap));
     }
 }
