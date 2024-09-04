@@ -74,13 +74,46 @@ public class PostController {
     }
 
     // 게시글 단일 조회
-    @Operation(summary = "게시글 번호로 특정 게시글 조회",
+    @Operation(
+            summary = "게시글 번호로 특정 게시글 조회",
             description = "게시글 번호를 통해 특정 게시글을 조회한다.",
-            parameters = {@Parameter(name = "postId", description = "사용자 화면에서 넘어오는 post의 pk")})
-    @GetMapping("/posts/{postId}")
-    public ResponseEntity<?> findPostByPostId(@PathVariable int postId) {
+            parameters = {
+                    @Parameter(
+                            name = "postId",
+                            description = "사용자 화면에서 넘어오는 post의 pk"
+                    )
+            })
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<ResponseMsg> findPostByPostId(@PathVariable long postId) throws PostNotFoundException {
 
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                new MediaType(
+                        "application",
+                        "json",
+                        Charset.forName("UTF-8")
+                )
+        );
+
+
+
+        PostDTO foundPost = postService.getPostByPostId(postId);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("post", foundPost);
+
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new ResponseMsg(200, "단일조회성공", responseMap));
+
+        //        PostDTO foundPost = posts.stream()
+//                .filter(post -> post.getPostId() ==postId).toList().get(0);
+//
+//        Map<String, Object> responseMap = new HashMap<>();
+//        responseMap.put("post", foundPost);
+
+
     }
 
     // 게시글 수정

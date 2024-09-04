@@ -4,9 +4,8 @@ import com.ohdaesan.board.domain.dto.PostDTO;
 import com.ohdaesan.board.domain.entity.Post;
 import com.ohdaesan.board.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import com.ohdaesan.board.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.ohdaesan.board.global.PostNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,5 +47,17 @@ public class PostService {
         postRepository.save(post);
 
 
+    }
+
+//    @Override
+//    public PostDTO getPostByPostId(long postId) {
+//        return posts.stream()
+//                .filter(post -> post.getPostId() == postId)
+//                .toList().get(0);
+//    }
+
+    public Post getPostByPostId(long postId) throws PostNotFoundException {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("값이 없어요~" + postId));
     }
 }
