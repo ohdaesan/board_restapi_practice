@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 public class PostDTO {
-    private long postId;
+    private int postId;
     private String title;
     private String content;
 }

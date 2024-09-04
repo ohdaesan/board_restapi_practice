@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +17,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 public class PostController {
-    private List<PostDTO> posts;
 
-    public PostController() {
-        posts = new ArrayList<>();
-
-        posts.add(new PostDTO(1, "title01", "content01"));
-        posts.add(new PostDTO(2, "title02", "content02"));
-        posts.add(new PostDTO(3, "title03", "content03"));
-    }
 
     // 게시글 작성
     @Operation(summary = "게시글 작성", description = "게시판에 업로드할 새로운 게시글 작성")
     @PostMapping("/posts")
     public ResponseEntity<?> createNewPost (@RequestBody PostDTO newPost) {
 
-        return null;
+        System.out.println("newPost = " + newPost);
+
+        int lastPostNo = posts.get(posts.size() - 1).getPostId();
+
+        newPost.setPostId(lastPostNo + 1);
+
+        posts.add(newPost);
+
+        return ResponseEntity
+                .created(URI.create("/board/posts/" + posts.get(posts.size() - 1).getPostId()))
+                .build();
     }
 
     // 게시글 전체 조회
