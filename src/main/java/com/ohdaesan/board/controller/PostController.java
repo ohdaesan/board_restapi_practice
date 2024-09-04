@@ -83,7 +83,7 @@ public class PostController {
                             description = "사용자 화면에서 넘어오는 post의 pk"
                     )
             })
-    @GetMapping("/post/{postId}")
+    @GetMapping("/posts/{postId}")
     public ResponseEntity<ResponseMsg> findPostByPostId(@PathVariable long postId) throws PostNotFoundException {
 
         HttpHeaders headers = new HttpHeaders();
@@ -97,7 +97,7 @@ public class PostController {
 
 
 
-        PostDTO foundPost = postService.getPostByPostId(postId);
+        Post foundPost = postService.getPostByPostId(postId);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("post", foundPost);
