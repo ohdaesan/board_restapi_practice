@@ -60,20 +60,15 @@ public class PostController {
     })
     @PutMapping("/posts/{postId}")
     public ResponseEntity<?> editPost(@PathVariable long postId, @RequestBody PostDTO modifiedPost) throws PostNotFoundException {
-        Map<String, Object> response = new HashMap<>();
+        postService.updatePost(postId, modifiedPost.getTitle(), modifiedPost.getContent());
 
-        Post postEntity = Post.builder().postId(postId).title(modifiedPost.getTitle()).content(modifiedPost.getContent()).build();
+        Map<String, Object> responseMap = new HashMap<>();
+        String msg = "게시글 수정에 성공하였습니다.";
+        responseMap.put("result", msg);
 
-        boolean isUpdated = postService.editPost(postId, postEntity);
-        if (isUpdated) {
-            response.put("result", "게시글 수정에 성공하였습니다.");
-            return ResponseEntity
-                    .status(203)
-                    .body(new ResponseMsg(203, "게시글 수정 성공", response));
-        } else {
-            throw new PostNotFoundException("게시글을 찾을 수 없거나 수정에 실패하였습니다.");
-        }
+        return ResponseEntity.ok().body(new ResponseMsg(203, "게시글 수정 성공", responseMap));
     }
+
 
 
     // 게시글 삭제
