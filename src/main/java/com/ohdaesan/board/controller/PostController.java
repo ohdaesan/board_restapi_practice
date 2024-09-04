@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +56,15 @@ public class PostController {
     // 게시글 수정
     @Operation(summary = "게시글 수정", description = "특정 게시글 수정")
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<?> editPost(@PathVariable int postId, @RequestBody PostDTO modifiedPost) {
+    public ResponseEntity<?> editPost(@PathVariable long postId, @RequestBody PostDTO modifiedPost) {
 
-        return null;
+        PostDTO foundPost = posts.stream().filter(user -> user.getPostId() == postId).toList().get(0);
+
+        foundPost.setPostId(modifiedPost.getPostId());
+        foundPost.setTitle(modifiedPost.getTitle());
+        foundPost.setContent(modifiedPost.getContent());
+
+        return ResponseEntity.created(URI.create("/entity/posts/" + postId)).build();
     }
 
     // 게시글 삭제
