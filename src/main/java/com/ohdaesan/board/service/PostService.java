@@ -1,33 +1,37 @@
 package com.ohdaesan.board.service;
 
-import com.ohdaesan.board.domain.dto.PostDTO;
 import com.ohdaesan.board.domain.entity.Post;
-import com.ohdaesan.board.global.PostNotFoundException;
 import com.ohdaesan.board.repository.PostRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import com.ohdaesan.board.global.PostNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class PostService {
-
-//    private final List<PostDTO> posts;
     private final PostRepository postRepository;
 
-//    @Autowired
-//    public PostRepository(List<PostDTO> posts) {
-//        this.posts = posts;
-//    }
-
-    @Autowired
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
+    public List<Post> findAllPosts() {
+        return postRepository.findAll();
     }
 
-    
+    public boolean deletePost(long postNo) {
+        try {
+            if (postRepository.existsById(postNo)) {
+                postRepository.deleteById(postNo);
+                return true; // 게시글 삭제 성공
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
 
-
+    }
 
 //    @Override
 //    public PostDTO getPostByPostId(long postId) {
@@ -36,8 +40,8 @@ public class PostService {
 //                .toList().get(0);
 //    }
 
-    public PostDTO getPostByPostId(long postId) throws PostNotFoundException {
+    public Post getPostByPostId(long postId) throws PostNotFoundException {
         return postRepository.findById(postId)
-                .orElseThrow(() ->new PostNotFoundException("값이 없어요~" + postId));
+                .orElseThrow(() -> new PostNotFoundException("값이 없어요~" + postId));
     }
 }
